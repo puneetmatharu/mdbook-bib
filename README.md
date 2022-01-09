@@ -2,9 +2,9 @@
 
 A [mdBook](https://github.com/rust-lang/mdBook) plugin for creating a bibliography & citations in your books.
 
-[![Test status](https://github.com/francisco-perez-sorrosal/mdbook-bib/actions/workflows/test.yml/badge.svg)](https://github.com/francisco-perez-sorrosal/mdbook-bib/actions/workflows/test.yml)
-[![MPL-2.0 License](https://img.shields.io/github/license/francisco-perez-sorrosal/mdbook-bib)](https://github.com/francisco-perez-sorrosal/mdbook-bib/blob/master/LICENSE)
-[![Manual](https://img.shields.io/badge/book-master-blue.svg)](https://francisco-perez-sorrosal.github.io/mdbook-bib/)
+[![Test status](https://github.com/puneetmatharu/mdbook-bib/actions/workflows/test.yml/badge.svg)](https://github.com/puneetmatharu/mdbook-bib/actions/workflows/test.yml)
+[![MPL-2.0 License](https://img.shields.io/github/license/puneetmatharu/mdbook-bib)](https://github.com/puneetmatharu/mdbook-bib/blob/master/LICENSE)
+[![Manual](https://img.shields.io/badge/book-master-blue.svg)](https://puneetmatharu.github.io/mdbook-bib/)
 
 [![Crate](https://img.shields.io/crates/v/mdbook-bib.svg)](https://crates.io/crates/mdbook-bib)
 ![Crates.io](https://img.shields.io/crates/d/mdbook-bib?style=social&link=https://crates.io/crates/mdbook-bib)
@@ -25,7 +25,7 @@ cargo install mdbook-bib
 
 Make sure your PATH env var contains Cargo's `/bin` directory where the plugin was installed. Then follow the instructions below to use the plugin.
 
-See all options in the [Install section of the manual](https://francisco-perez-sorrosal.github.io/mdbook-bib/install.html).
+See all options in the [Install section of the manual](https://puneetmatharu.github.io/mdbook-bib/install.html).
 
 ## Add a BibLaTex File and Cite your Bib Entries!
 
@@ -51,8 +51,8 @@ or simply with:
 @@my-citation-key
 ```
 
-See other configuration options in the [Config section of the manual](https://francisco-perez-sorrosal.github.io/mdbook-bib/config.html).
+See other configuration options in the [Config section of the manual](https://puneetmatharu.github.io/mdbook-bib/config.html).
 
 ## Contribute
 
-Check the [Contrib section of the manual](https://francisco-perez-sorrosal.github.io/mdbook-bib/contrib.html) if you want to contribute to mdbook-bib!
+Check the [Contrib section of the manual](https://puneetmatharu.github.io/mdbook-bib/contrib.html) if you want to contribute to mdbook-bib!
