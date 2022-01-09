@@ -45,7 +45,7 @@ const DUMMY_BIB_SRC: &str = r#"
     url = {https://doc.rust-lang.org/book/},
 }
 @book{book_of_spells,
-    author = {"Matharu, PuneetA and Matharu, PuneetB"},
+    author = {"James, Andrew and Wilson, Andrew Lincoln and Francisco Perez-Sorrosal"},
     title = {"The Rust Programming Language"},
     year = {"2018"},
     isbn = {"1593278284"},
@@ -145,6 +145,10 @@ fn bibliography_includes_and_renders_url_when_present_in_bibitems() {
     // book_of_spells contains a publisher, journal, address and volume
     let book_of_spells = bibliography_loaded.get("book_of_spells");
     assert_eq!(
+        &book_of_spells.unwrap().authors,
+        "James, A., Wilson, A. L., Francisco, P. S."
+    );
+    assert_eq!(
         book_of_spells.unwrap().publisher.as_ref().unwrap(),
         "Cambridge University Press"
     );
@@ -160,11 +164,13 @@ fn bibliography_includes_and_renders_url_when_present_in_bibitems() {
 
     // fps dummy book does not include a url for in the BibItem
     let fps = bibliography_loaded.get("fps");
+    assert_eq!(&fps.unwrap().authors, "Francisco, P. S.",);
     assert!(fps.unwrap().url.is_none());
     assert!(fps.unwrap().journal.is_none());
 
     // rust_book does...
     let rust_book = bibliography_loaded.get("rust_book");
+    assert_eq!(&rust_book.unwrap().authors, "Klabnik, S., Nichols, C.",);
     assert_eq!(
         rust_book.unwrap().url.as_ref().unwrap(),
         "https://doc.rust-lang.org/book/"

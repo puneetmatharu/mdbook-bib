@@ -2,7 +2,7 @@
 
 ## Adding a BibLaTex-format Bibliography
 
-**mdbook-bib** allows adding a bibliography in [BibLaTex format](https://www.ctan.org/pkg/biblatex) to your book. 
+**mdbook-bib** allows adding a bibliography in [BibLaTex format](https://www.ctan.org/pkg/biblatex) to your book.
 
 Assuming that your directory structure for your book looks like this:
 
@@ -34,7 +34,7 @@ my_book/
 bibliography = "my_biblio.bib"
 ```
 
-The bibliography will appear as a separate section in your book ToC. 
+The bibliography will appear as a separate section in your book ToC.
 
 ## Adding a BibLaTex-format Bibliography from [Zotero](https://www.zotero.org/)
 
@@ -48,7 +48,7 @@ In order to do so, just specify the `Zotero UserId` of the public bibliography y
 zotero-uid = "<a_Zotero_userID>"
 ```
 
-The `Zotero UserId` is the number that appears following the `users` resource in a public bibliography URL. e.g. in the 
+The `Zotero UserId` is the number that appears following the `users` resource in a public bibliography URL. e.g. in the
 example below, the `Zotero UserId` is 475425:
 ```shell
 https://api.zotero.org/users/475425/items?format=atom&v=3
@@ -56,7 +56,7 @@ https://api.zotero.org/users/475425/items?format=atom&v=3
 
 If you have a Zotero account, you can make your library public marking the checkbox in the [Zotero Privacy Settings page](https://www.zotero.org/settings/privacy).
 
-You can find your `Zotero userID` in the [Zotero Feeds/API](https://www.zotero.org/settings/keys) section of your 
+You can find your `Zotero userID` in the [Zotero Feeds/API](https://www.zotero.org/settings/keys) section of your
 Zotero account.
 
 ## Add References/Citations to the Bibliography
@@ -81,6 +81,10 @@ The available placeholders that can be used in the handlebars template for now a
 * title
 * url
 * pub_year
+* publisher
+* address
+* journal
+* volume
 
 Also, with the parameters `css` and `js`, you can point to files that provide your own css style and/or Javascript functions used in the rendering of the Handlebars template entries (e.g. for the `bib_div` class above). For more details, check the [structure of the manual](https://github.com/francisco-perez-sorrosal/mdbook-bib/tree/master/manual) of this project.
 

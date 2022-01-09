@@ -9,11 +9,9 @@ name: Release
 
 # Uncomment this just in case we have to manually do the release
 on:
-  push:
-    branches:
-      - master
-  release:
-    types: [ created ]
+  create:
+    tags:
+      - v*.*.*
 
 env:
   CARGO_TERM_COLOR: always

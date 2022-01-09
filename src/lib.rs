@@ -254,6 +254,27 @@ pub(crate) fn download_bib_from_zotero(user_id: String) -> MdResult<String, Erro
     }
 }
 
+fn process_author_name(name: String) -> MdResult<String, Error> {
+    let mut names: Vec<String> = name
+        .replace(", ", " ")
+        .replace('-', " ")
+        .split(' ')
+        .map(|x| x.to_string())
+        .collect();
+    let surname: String = names.remove(0);
+    let other_names = names;
+    if other_names.is_empty() {
+        return Err(anyhow!("Author does not contain a forename!".to_string()));
+    }
+    let mut initials: String = String::new();
+    for s in other_names {
+        if let Some(c) = s.chars().next() {
+            initials.push_str(format!("{}. ", c).as_str());
+        }
+    }
+    return Ok(format!("{}, {}", surname, initials.trim()));
+}
+
 /// Gets the references and info created from bibliography.
 pub(crate) fn build_bibliography(raw_content: String) -> MdResult<HashMap<String, BibItem>, Error> {
     log::info!("Building bibliography...");
@@ -283,9 +304,11 @@ pub(crate) fn build_bibliography(raw_content: String) -> MdResult<HashMap<String
             let authors: Vec<String> = authors_str
                 .split("and")
                 .map(|a| a.trim().to_string())
+                .map(process_author_name)
+                .filter_map(|a| a.ok())
                 .collect();
-            let url: Option<String> = tm.get("url").map(|u| (*u.to_owned()).parse().unwrap());
 
+            let url: Option<String> = tm.get("url").map(|u| (*u.to_owned()).parse().unwrap());
             let publisher: Option<String> = tm
                 .get("publisher")
                 .map(|u| (*u.to_owned()).parse().unwrap());
