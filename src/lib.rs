@@ -255,24 +255,14 @@ pub(crate) fn download_bib_from_zotero(user_id: String) -> MdResult<String, Erro
 }
 
 fn process_author_name(name: String) -> MdResult<String, Error> {
-    let mut names: Vec<String> = name
+    let surname = name
         .replace(", ", " ")
         .replace('-', " ")
         .split(' ')
         .map(|x| x.to_string())
-        .collect();
-    let surname: String = names.remove(0);
-    let other_names = names;
-    if other_names.is_empty() {
-        return Err(anyhow!("Author does not contain a forename!".to_string()));
-    }
-    let mut initials: String = String::new();
-    for s in other_names {
-        if let Some(c) = s.chars().next() {
-            initials.push_str(format!("{}. ", c).as_str());
-        }
-    }
-    return Ok(format!("{}, {}", surname, initials.trim()));
+        .next()
+        .unwrap();
+    Ok(surname)
 }
 
 /// Gets the references and info created from bibliography.
@@ -535,6 +525,13 @@ impl<'a> Placeholder<'a> {
         })
     }
 
+    fn construct_cite_text(cite: &str, bibliography: &HashMap<String, BibItem>) -> String {
+        let bib_item: &BibItem = bibliography.get(cite).unwrap();
+        let authors = &bib_item.authors;
+        let year = &bib_item.pub_year;
+        return format!("{}, {}", authors, year);
+    }
+
     fn render_with_path(
         &self,
         source_file: &std::path::Path,
@@ -543,11 +540,11 @@ impl<'a> Placeholder<'a> {
         match self.placeholder_type {
             PlaceholderType::Cite(ref cite) | PlaceholderType::AtCite(ref cite) => {
                 if bibliography.contains_key(cite) {
-                    let authors = &bibliography.get(cite).unwrap().authors;
+                    let cite_text = Self::construct_cite_text(cite, bibliography);
                     let path_to_root = breadcrumbs_up_to_root(source_file);
                     format!(
-                        "\\[[{}]({}bibliography.html#{})\\]",
-                        authors, path_to_root, cite
+                        "[{}]({}bibliography.html#{})",
+                        cite_text, path_to_root, cite
                     )
                 } else {
                     format!("\\[Unknown bib ref: {}\\]", cite)
