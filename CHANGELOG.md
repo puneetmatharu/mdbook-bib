@@ -1,5 +1,7 @@
 #
 
+## [v0.0.6](https://github.com/puneetmatharu/mdbook-bib/tree/v0.0.6) (2022-01-09)
+
 ## [v0.0.5](https://github.com/puneetmatharu/mdbook-bib/tree/v0.0.5) (2022-01-09)
 
 ## [v0.0.4](https://github.com/puneetmatharu/mdbook-bib/tree/v0.0.4) (2021-09-04)
