@@ -308,6 +308,15 @@ pub(crate) fn build_bibliography(raw_content: String) -> MdResult<HashMap<String
                 .filter_map(|a| a.ok())
                 .collect();
 
+            let author_string: String;
+            if authors.len() == 1 {
+                author_string = authors[0].to_string();
+            } else if authors.len() == 2 {
+                author_string = format!("{} & {}", authors[0], authors[1]);
+            } else {
+                author_string = format!("{} et al.", authors[0]);
+            }
+
             let url: Option<String> = tm.get("url").map(|u| (*u.to_owned()).parse().unwrap());
             let publisher: Option<String> = tm
                 .get("publisher")
@@ -326,7 +335,7 @@ pub(crate) fn build_bibliography(raw_content: String) -> MdResult<HashMap<String
                         .get("title")
                         .unwrap_or(&"Not Found".to_owned())
                         .to_string(),
-                    authors: authors.join(", "),
+                    authors: author_string,
                     pub_month,
                     pub_year,
                     summary: tm.get("abstract").unwrap_or(&"N/A".to_owned()).to_string(),
@@ -534,10 +543,11 @@ impl<'a> Placeholder<'a> {
         match self.placeholder_type {
             PlaceholderType::Cite(ref cite) | PlaceholderType::AtCite(ref cite) => {
                 if bibliography.contains_key(cite) {
+                    let authors = &bibliography.get(cite).unwrap().authors;
                     let path_to_root = breadcrumbs_up_to_root(source_file);
                     format!(
                         "\\[[{}]({}bibliography.html#{})\\]",
-                        cite, path_to_root, cite
+                        authors, path_to_root, cite
                     )
                 } else {
                     format!("\\[Unknown bib ref: {}\\]", cite)

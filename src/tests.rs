@@ -30,8 +30,8 @@ static EXAMPLE_HB_TEMPLATE: &str = include_str!("../manual/src/render/my_referen
 
 const DUMMY_BIB_SRC: &str = r#"
 @misc {fps,
-    title = {"This is a bib entry!"},
     author = {"Francisco Perez-Sorrosal"},
+    title = {"This is a bib entry!"},
     month = {"oct"},
     year = {"2020"},
     what_is_this = {"blabla"},
@@ -144,10 +144,7 @@ fn bibliography_includes_and_renders_url_when_present_in_bibitems() {
 
     // book_of_spells contains a publisher, journal, address and volume
     let book_of_spells = bibliography_loaded.get("book_of_spells");
-    assert_eq!(
-        &book_of_spells.unwrap().authors,
-        "James, A., Wilson, A. L., Francisco, P. S."
-    );
+    assert_eq!(&book_of_spells.unwrap().authors, "James, A. et al.");
     assert_eq!(
         book_of_spells.unwrap().publisher.as_ref().unwrap(),
         "Cambridge University Press"
@@ -170,7 +167,7 @@ fn bibliography_includes_and_renders_url_when_present_in_bibitems() {
 
     // rust_book does...
     let rust_book = bibliography_loaded.get("rust_book");
-    assert_eq!(&rust_book.unwrap().authors, "Klabnik, S., Nichols, C.",);
+    assert_eq!(&rust_book.unwrap().authors, "Klabnik, S. & Nichols, C.",);
     assert_eq!(
         rust_book.unwrap().url.as_ref().unwrap(),
         "https://doc.rust-lang.org/book/"
@@ -204,8 +201,10 @@ fn valid_and_invalid_citations_are_replaced_properly_in_book_text() {
     let text_with_citations = replace_all_placeholders(&chapter, &bibliography, &mut cited);
     // TODO: These asserts will probably fail if we allow users to specify the bibliography
     // chapter name as per issue #6
-    assert!(text_with_citations.contains("[fps](bibliography.html#fps)"));
-    assert!(text_with_citations.contains("[rust_book](bibliography.html#rust_book)"));
+    assert!(text_with_citations.contains("[Francisco, P. S.](bibliography.html#fps)"));
+    assert!(
+        text_with_citations.contains("[Klabnik, S. & Nichols, C.](bibliography.html#rust_book)")
+    );
 
     // Check a mix of valid and invalid references included/not included in a dummy text
     let chapter = Chapter::new(
@@ -215,7 +214,7 @@ fn valid_and_invalid_citations_are_replaced_properly_in_book_text() {
         vec![],
     );
     let text_with_citations = replace_all_placeholders(&chapter, &bibliography, &mut cited);
-    assert!(text_with_citations.contains("[fps]"));
+    assert!(text_with_citations.contains("[Francisco, P. S.]"));
     assert!(text_with_citations.contains("[Unknown bib ref:"));
 }
 
@@ -232,13 +231,14 @@ fn citations_in_subfolders_link_properly() {
         // TODO: These asserts will probably fail if we allow users to specify the bibliography
         // chapter name as per issue #6
         assert!(
-            text_with_citations.contains(&format!("[fps]({}#fps)", link)),
+            text_with_citations.contains(&format!("[Francisco, P. S.]({}#fps)", link)),
             "Expecting link to '{}' in string '{}'",
             link,
             text_with_citations
         );
         assert!(
-            text_with_citations.contains(&format!("[rust_book]({}#rust_book)", link)),
+            text_with_citations
+                .contains(&format!("[Klabnik, S. & Nichols, C.]({}#rust_book)", link)),
             "Expecting link to '{}' in string '{}'",
             link,
             text_with_citations
