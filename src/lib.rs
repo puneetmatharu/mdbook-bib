@@ -41,7 +41,7 @@ impl Bibiography {
         let bib_content = match &cfg.bibliography {
             Some(biblio_file) => {
                 info!("Bibliography file: {}", biblio_file);
-                let mut biblio_path = ctx.root.join(ctx.config.book.src.to_owned());
+                let mut biblio_path = ctx.root.join(&ctx.config.book.src);
                 biblio_path = biblio_path.join(Path::new(&biblio_file));
                 if !biblio_path.exists() {
                     Err(anyhow!(format!(
@@ -62,7 +62,7 @@ impl Bibiography {
                         if !bib_str.is_empty() {
                             let biblio_path = ctx.root.join(Path::new("my_zotero.bib"));
                             info!("Saving Zotero bibliography to {:?}", biblio_path);
-                            let _ = fs::write(biblio_path, bib_str.to_owned());
+                            let _ = fs::write(biblio_path, &bib_str);
                             Ok(bib_str)
                         } else {
                             // warn!("Bib content retrieved from Zotero is empty!");
@@ -158,10 +158,19 @@ pub struct BibItem {
     pub summary: String,
     /// The article's url.
     pub url: Option<String>,
+    /// The publisher.
+    pub publisher: Option<String>,
+    /// The journal the article was published in.
+    pub journal: Option<String>,
+    /// The publisher address.
+    pub address: Option<String>,
+    /// The journal volume that the article was published in.
+    pub volume: Option<String>,
 }
 
 impl BibItem {
     /// Create a new bib item with the provided content.
+    #[allow(clippy::too_many_arguments)]
     pub fn new(
         citation_key: &str,
         title: String,
@@ -170,6 +179,10 @@ impl BibItem {
         pub_year: String,
         summary: String,
         url: Option<String>,
+        publisher: Option<String>,
+        journal: Option<String>,
+        address: Option<String>,
+        volume: Option<String>,
     ) -> BibItem {
         BibItem {
             citation_key: citation_key.to_string(),
@@ -179,6 +192,10 @@ impl BibItem {
             pub_year,
             summary,
             url,
+            publisher,
+            journal,
+            address,
+            volume,
         }
     }
 }
@@ -242,7 +259,7 @@ pub(crate) fn build_bibliography(raw_content: String) -> MdResult<HashMap<String
     log::info!("Building bibliography...");
 
     // Filter quotes (") that may appear in abstracts, etc. and that Bibtex parser doesn't like
-    let mut biblatex_content = raw_content.replace("\"", "");
+    let mut biblatex_content = raw_content.replace('\"', "");
     // Expressions in the content such as R@10 are not parsed well
     let re = Regex::new(r" (?P<before>[A-Za-z])@(?P<after>\d+) ").unwrap();
     biblatex_content = re
@@ -269,6 +286,15 @@ pub(crate) fn build_bibliography(raw_content: String) -> MdResult<HashMap<String
                 .collect();
             let url: Option<String> = tm.get("url").map(|u| (*u.to_owned()).parse().unwrap());
 
+            let publisher: Option<String> = tm
+                .get("publisher")
+                .map(|u| (*u.to_owned()).parse().unwrap());
+            let journal: Option<String> =
+                tm.get("journal").map(|u| (*u.to_owned()).parse().unwrap());
+            let address: Option<String> =
+                tm.get("address").map(|u| (*u.to_owned()).parse().unwrap());
+            let volume: Option<String> = tm.get("volume").map(|u| (*u.to_owned()).parse().unwrap());
+
             (
                 bib.citation_key().to_string(),
                 BibItem {
@@ -282,6 +308,10 @@ pub(crate) fn build_bibliography(raw_content: String) -> MdResult<HashMap<String
                     pub_year,
                     summary: tm.get("abstract").unwrap_or(&"N/A".to_owned()).to_string(),
                     url,
+                    publisher,
+                    journal,
+                    address,
+                    volume,
                 },
             )
         })
@@ -322,7 +352,7 @@ impl Preprocessor for Bibiography {
 
     fn run(&self, ctx: &PreprocessorContext, mut book: Book) -> Result<Book, anyhow::Error> {
         info!("Processor Name: {}", self.name());
-        let book_src_root = ctx.root.join(ctx.config.book.src.to_owned());
+        let book_src_root = ctx.root.join(&ctx.config.book.src);
         let table = ctx.config.get_preprocessor(self.name());
         let config = match Config::build_from(table, book_src_root) {
             Ok(config) => config,

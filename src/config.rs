@@ -59,7 +59,7 @@ impl<'a> Config<'a> {
                 bib_hb_html: match table.get("hb-tpl") {
                     Some(template) => {
                         let template_path =
-                            book_src_path.join(Path::new(&template.as_str().unwrap().to_string()));
+                            book_src_path.join(Path::new(&template.as_str().unwrap()));
                         let template_path_str =
                             template_path.into_os_string().into_string().unwrap();
                         info!(
@@ -77,8 +77,7 @@ impl<'a> Config<'a> {
 
                 css_html: match table.get("css") {
                     Some(css) => {
-                        let css_path =
-                            book_src_path.join(Path::new(&css.as_str().unwrap().to_string()));
+                        let css_path = book_src_path.join(Path::new(&css.as_str().unwrap()));
                         let css_path_str = css_path.into_os_string().into_string().unwrap();
                         info!(
                             "Using CSS style for bibliography from {:?}...",
@@ -95,8 +94,7 @@ impl<'a> Config<'a> {
 
                 js_html: match table.get("js") {
                     Some(css) => {
-                        let js_path =
-                            book_src_path.join(Path::new(&css.as_str().unwrap().to_string()));
+                        let js_path = book_src_path.join(Path::new(&css.as_str().unwrap()));
                         let js_path_str = js_path.into_os_string().into_string().unwrap();
                         info!(
                             "Using JS template for bibliography from {:?}...",

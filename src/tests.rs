@@ -44,6 +44,17 @@ const DUMMY_BIB_SRC: &str = r#"
     publisher = {"No Starch Press"},
     url = {https://doc.rust-lang.org/book/},
 }
+@book{book_of_spells,
+    author = {"Matharu, PuneetA and Matharu, PuneetB"},
+    title = {"The Rust Programming Language"},
+    year = {"2018"},
+    isbn = {"1593278284"},
+    url = {https://doc.rust-lang.org/book/},
+    publisher = {"Cambridge University Press"},
+    journal = {"Journal of Fluid Mechanics"},
+    address = {"Cambridge"},
+    volume = {"918"},
+}
 "#;
 
 const DUMMY_TEXT_WITH_2_VALID_CITE_PLACEHOLDERS: &str = r#"
@@ -93,7 +104,7 @@ fn cant_load_bib_bibliography_from_file() {
 fn bibliography_builder_returns_a_bibliography() {
     let bibliography_loaded: HashMap<String, BibItem> =
         build_bibliography(DUMMY_BIB_SRC.to_string()).unwrap();
-    assert_eq!(bibliography_loaded.len(), 2);
+    assert_eq!(bibliography_loaded.len(), 3);
     assert_eq!(bibliography_loaded.get("fps").unwrap().citation_key, "fps");
 }
 
@@ -131,15 +142,35 @@ fn bibliography_includes_and_renders_url_when_present_in_bibitems() {
     let bibliography_loaded: HashMap<String, BibItem> =
         build_bibliography(DUMMY_BIB_SRC.to_string()).unwrap();
 
+    // book_of_spells contains a publisher, journal, address and volume
+    let book_of_spells = bibliography_loaded.get("book_of_spells");
+    assert_eq!(
+        book_of_spells.unwrap().publisher.as_ref().unwrap(),
+        "Cambridge University Press"
+    );
+    assert_eq!(
+        book_of_spells.unwrap().journal.as_ref().unwrap(),
+        "Journal of Fluid Mechanics"
+    );
+    assert_eq!(
+        book_of_spells.unwrap().address.as_ref().unwrap(),
+        "Cambridge"
+    );
+    assert_eq!(book_of_spells.unwrap().volume.as_ref().unwrap(), "918");
+
     // fps dummy book does not include a url for in the BibItem
     let fps = bibliography_loaded.get("fps");
     assert!(fps.unwrap().url.is_none());
+    assert!(fps.unwrap().journal.is_none());
+
     // rust_book does...
     let rust_book = bibliography_loaded.get("rust_book");
     assert_eq!(
         rust_book.unwrap().url.as_ref().unwrap(),
         "https://doc.rust-lang.org/book/"
     );
+    assert!(rust_book.unwrap().address.is_none());
+
     // ...and is included in the render
     let html = Bibiography::generate_bibliography_html(
         &bibliography_loaded,
